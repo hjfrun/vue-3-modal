@@ -1,23 +1,41 @@
 <script setup>
   import { ref } from 'vue'
+  import { onClickOutside } from '@vueuse/core'
 
   const isModalOpen = ref(false)
+  const modal = ref(null)
+  onClickOutside(modal, () => {
+    isModalOpen.value = false
+  })
 </script>
 
 <template>
   <h1>🔥 Vue 3 Modal!</h1>
-  <button @click="isModalOpen = true">Open Modal</button>
+  <button class="open-btn" @click="isModalOpen = true">Open Modal</button>
   <Teleport to="#modal">
-    <div class="modal-bg" v-if="isModalOpen">
-      <div class="modal">
-        <button class="close-btn" @click="isModalOpen = false">X</button>
-        Click outside to close this modal to close it
+    <Transition name="modal">
+      <div class="modal-bg" v-if="isModalOpen">
+        <div class="modal" ref="modal">
+          <button class="close-btn" @click="isModalOpen = false">X</button>
+          Click outside to close this modal to close it
+        </div>
       </div>
-    </div>
+    </Transition>
   </Teleport>
 </template>
 
 <style scoped>
+  h1 {
+    text-align: center;
+  }
+
+  /** center the open modal button */
+  .open-btn {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .modal-bg {
     /* always show the modal in the center of the screen */
     position: fixed;
@@ -56,5 +74,20 @@
     background: none;
     border: none;
     cursor: pointer;
+  }
+
+  .modal-enter-active,
+  .modal-leave-active {
+    transition: all 0.25s ease;
+  }
+
+  .modal-enter-from,
+  .modal-leave-to {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+
+  html {
+    background: #ecf0f1;
   }
 </style>
